@@ -1,0 +1,36 @@
+{
+    "data": [
+        {
+            "startTime": "2022-01-17T01:00:00.000",
+            "endTime": "2022-01-18T01:00:00.000",
+            "startMileage": "10000",
+            "endMileage": "10020",
+            "customerName": "John",
+            "jboSite": "CT",
+            "totalMiles": "20",
+            "totalHrs": "24",
+            "ticketStatus": "COMPLETED",
+            "agentId": "111213123",
+            "mgrId": "1115",
+            "createDt": "2022-01-18T01:00:00.000",
+            "desc": "modify item",
+            "ticketID": "12347"
+        },
+        {
+            "startTime": "2022-01-17T01:00:00.000",
+            "endTime": "2022-01-18T01:00:00.000",
+            "startMileage": "10000",
+            "endMileage": "10020",
+            "customerName": "John",
+            "jboSite": "CT",
+            "totalMiles": "20",
+            "totalHrs": "24",
+            "ticketStatus": "COMPLETED",
+            "agentId": "111213123",
+            "mgrId": "1115",
+            "createDt": "2022-01-18T01:00:00.000",
+            "desc": "Repair Completed",
+            "ticketID": "12348"
+        }
+    ]
+}
