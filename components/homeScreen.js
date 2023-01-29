@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+//import { useFocusEffect } from '@react-navigation/native';
 import { View, ScrollView, Text, StyleSheet,TouchableOpacity } from 'react-native';
 //import Swipeout from 'react-native-swipeout';
 import { Avatar,Badge,Card } from '@rneui/themed';
@@ -68,13 +69,14 @@ const createTicket = () => {
 };
 
 const getDay = (dt) => {
+  console.log(dt);
   if(dt!=null)
   {
   newDt= new Date(dt).getDate()+weekday[new Date(dt).getDay()];
   console.log("New Date => "+newDt);
   return newDt;
   }else
-  {1
+  {
     return "Day not found";
   }
 
@@ -96,11 +98,29 @@ const tickets=async () => {
 
   useEffect(() => {
     console.log("Inside useEffect");
-    fetch("https://strata-api.loca.lt/gettickets/"+userId)
+    //fetch("https://strata-api.loca.lt/gettickets/"+userId)
+    fetch("http://localhost:8099/gettickets/"+userId)
      .then(resp => resp.json())
      .then(data => setTkt(data))
     },[]);
-  
+
+    /* useFocusEffect(
+      React.useCallback(() => {
+        let isActive = true;
+    
+        console.log("Inside useEffect");
+    fetch("https://strata-api.loca.lt/gettickets/"+userId)
+     .then(resp => resp.json())
+     .then(data => setTkt(data))
+    
+        return () => {
+          isActive = false;
+        };
+      }, [userId])
+    );
+   */
+
+
      console.log("Tkts => "+ JSON.stringify(Tkts));
 
 

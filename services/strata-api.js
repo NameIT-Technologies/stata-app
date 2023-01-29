@@ -1,4 +1,5 @@
-const apiUrl="https://strata-api.loca.lt";
+//const apiUrl="https://strata-api.loca.lt";
+const apiUrl="http://localhost:8099";
 
 
 

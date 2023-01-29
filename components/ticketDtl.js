@@ -33,7 +33,8 @@ export default function TicketDtl({route, navigation}) {
 
 useEffect(() => {
     console.log("Inside useEffect"+ticketID);
-    fetch("https://strata-api.loca.lt/getticket/"+ticketID)
+    //fetch("https://strata-api.loca.lt/getticket/"+ticketID)
+    fetch("http://localhost:8099/getticket/"+ticketID)
      .then(resp => resp.json())
      .then(async data => {
         console.log("Get ticketDtls"+ JSON.stringify(data));
