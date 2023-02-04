@@ -16,7 +16,7 @@ export default function TicketDtl({route, navigation}) {
     const [customerName, setCustomerName] = useState('');
   const [jobSite, setJobSite] = useState('');
   const [startMileage, setStartMileage] = useState(0);
-  const [endMileage, setEndMileage] = useState(0);
+  const [endMileage, setEndMileage] = useState('');
   const [confirmMsg,setConfirmation]=useState(false); 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startTime, setStartTime] = useState('');
@@ -29,30 +29,54 @@ export default function TicketDtl({route, navigation}) {
   const[totalHrs,setTotalHrs]= useState(0);
   const[agentId,setAgentId]= useState(0);
 
-  const {ticketID} = route.params;
+  const {ticketID,name,userId} = route.params;
+  const[Tkts, setTkt] = useState(false);
 
 useEffect(() => {
     console.log("Inside useEffect"+ticketID);
     //fetch("https://strata-api.loca.lt/getticket/"+ticketID)
-    fetch("http://localhost:8099/getticket/"+ticketID)
+    //fetch("http://localhost:8099/getticket/"+ticketID)
+    fetch("http://ec2-13-232-162-26.ap-south-1.compute.amazonaws.com:8099/getticket/"+ticketID)
      .then(resp => resp.json())
      .then(async data => {
         console.log("Get ticketDtls"+ JSON.stringify(data));
         console.log("ticketID: "+data[0].ticketID+"; totalHrs :"+data[0].totalHrs+"; ticketStatus: "+data[0].ticketStatus+"; StartMiles: "+data[0].startMileage);
-        await setCustomerName(data[0].customerName);
-        await setJobSite(data[0].jboSite);
-        await setStartMileage(data[0].startMileage);
-        await setEndMileage(data[0].endMileage);
-        await setStartTime(data[0].startTime);
-        await setEndTime(data[0].endTime);
-        await setDesc(data[0].desc);
-        await setDerivedMiles(data[0].totalMiles);
-        await setCreateDt(data[0].createDt);
-        await setMgrId(data[0].mgrId);
-        await setAgentId(data[0].agentId);
-        console.log("Start Mileage: "+startMileage+"; AgentId :"+agentId);
+        await initializeValues(data[0]);
+        console.log("Start Miles : "+data[0].startMileage+"; Miles => "+startMileage+"; AgentId :"+agentId
+        +"; End Mileage: "+endMileage);
+
      })
     },[]);
+
+
+    useEffect(() => {
+      console.log("UseEffect => "+startMileage); // returns 0;
+      setTkt(true);
+
+    }, [startMileage]);
+
+
+
+     const initializeValues=async(item) => {
+       setCustomerName(item.customerName);
+       setJobSite(item.jboSite);
+       
+      const startMi= item.startMileage;
+      setStartMileage(startMi.toString());
+      console.log("Start Mi => "+startMileage);
+      //await setEndMileage(data[0].endMileage);
+      const endMi=2000;
+       setEndMileage(endMi);
+       setStartTime(item.startTime);
+       setEndTime(item.endTime);
+       setDesc(item.desc);
+       setDerivedMiles(item.totalMiles);
+       setCreateDt(item.createDt);
+       setMgrId(item.mgrId);
+       setAgentId(item.agentId);
+       
+    }    
+  
 
   const setMiles= () => {
     if(startMileage == 0 || endMileage == 0)
@@ -182,7 +206,8 @@ function isIsoDate(str) {
       <View style={{ flex: 0.3  }}></View>
       
       <View style={{flex: 12 }}>
-      { !confirmMsg &&
+      {/* { !confirmMsg && Tkts && */}
+      {Tkts &&
       <ScrollView style={[{flex: 12},styles.scrollView]}>
 
         <View style={styles.elementContainer}>
@@ -283,7 +308,7 @@ function isIsoDate(str) {
                 title="Done"
                 onPress={() => setShowDatePicker(false)}/> */}
 
-                <DateTimePicker mode="datetime" 
+                <DateTimePicker mode="time" 
                     isVisible={showDatePicker}
                     onConfirm={date => {
                         setShowDatePicker(false);
@@ -314,7 +339,7 @@ function isIsoDate(str) {
                                         }}
                 />  */}
 
-            <DateTimePicker mode="datetime" 
+            <DateTimePicker mode="time" 
                     isVisible={showEndTimePicker}
                     onConfirm={date => {
                         setShowEndTimePicker(false);
@@ -377,7 +402,7 @@ function isIsoDate(str) {
                 onPress={async () => {
                     await handleSubmit();
                     setConfirmation(!confirmMsg);
-                    navigation.navigate('Dashboard',{name:'Jake!'});
+                    navigation.navigate('Dashboard',{name:name,userId:userId});
                     }}>
                 <Text style={styles.textStyle}>Proceed</Text>
                 </Pressable>
@@ -402,7 +427,7 @@ function isIsoDate(str) {
 
     <TouchableOpacity onPress={() => {
             //setConfirmation(!confirmMsg)
-            navigation.navigate('Dashboard',{name:'Jake!'});
+            navigation.navigate('Dashboard',{name:name,userId:userId});
           }} 
           style={[styles.button, {backgroundColor:'red'}]}>
             <Text style={[styles.buttonText]}>Cancel</Text>

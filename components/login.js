@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput,StyleSheet, TouchableOpacity, Button, Animated } from 'react-native';
+import { View, Text, TextInput,StyleSheet, TouchableOpacity, Button, Animated,
+  ActivityIndicator,ImageBackground} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import services from '../services/strata-api';
@@ -78,38 +79,38 @@ const Login = ({ navigation }) => {
     transform: [{ scale: animationValue }],
   };
   return (
+
     <View style={styles.container}>
-     <Text style={{color:"black", padding: 6, fontFamily: 'TrebuchetMS-Bold', fontSize:20}}>Login</Text>
-     <View><Text> {'\n'}</Text></View>
-      <View style={styles.elementContainer}>
-      <Text style={{color:"white", padding: 6}}>User ID:</Text>
-      <TextInput style={styles.textInput}
-        value={username}
-        onChangeText={text => setUsername(text)}
-      />
-      </View>  
-      <View><Text> {'\n'}</Text></View>
-      <View style={styles.elementContainer}>
-      <Text style={{color:"white",padding: 6}}>Password:</Text>
-      <TextInput style={styles.textInput}
-        value={password}
-        onChangeText={text => setPassword(text)}
-        secureTextEntry={true}
-      />
+      <ImageBackground source={require("../stratalogin.png")} resizeMode="stretch" style={styles.image}>
+        <Text style={{ color: "black", padding: 6, fontFamily: 'TrebuchetMS-Bold', fontSize: 20 }}>Login</Text>
+        <View><Text> {'\n'}</Text></View>
+        <View style={styles.elementContainer}>
+          <Text style={{ color: "white", padding: 6 }}>User ID:</Text>
+          <TextInput style={styles.textInput}
+            value={username}
+            onChangeText={text => setUsername(text)} />
+        </View>
+        <View><Text> {'\n'}</Text></View>
+        <View style={styles.elementContainer}>
+          <Text style={{ color: "white", padding: 6 }}>Password:</Text>
+          <TextInput style={styles.textInput}
+            value={password}
+            onChangeText={text => setPassword(text)}
+            secureTextEntry={true} />
+        </View>
+        <View><Text> {'\n'}</Text></View>
+        {showError &&
+          <View><Text style={{ color: 'red' }}> Username & Password not matched!{'\n'}</Text></View>}
+        <TouchableOpacity onPress={() => {
+          //animateButton();
+          handleSubmit();
+        } }
+          //   onPressOut={resetAnimation}
+          style={[styles.button, { buttonStyle }]}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        </ImageBackground>
       </View>
-      <View><Text> {'\n'}</Text></View>
-      { showError && 
-      <View><Text style={{color:'red'}}> Username & Password not matched!{'\n'}</Text></View>  
-}
-      <TouchableOpacity onPress={() => {
-        //animateButton();
-        handleSubmit();
-      }} 
-    //   onPressOut={resetAnimation}
-      style={[styles.button, {buttonStyle}]}>
-        <Text style={styles.buttonText}>Login</Text>
-    </TouchableOpacity>
-    </View>
   );
 };
 
@@ -166,5 +167,18 @@ const styles = StyleSheet.create({
         color: "white",
         justifyContent: "center"
     
-    }
+    },
+    horizontal: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      padding: 10,
+    },
+    image: {
+      backgroundColor:'#FFFFff',
+      width:'100%',
+      height:'100%',
+       justifyContent: 'center',
+       alignItems: 'center',
+       }
+
     })

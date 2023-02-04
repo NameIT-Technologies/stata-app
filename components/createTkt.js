@@ -7,6 +7,7 @@ import { View, TextInput,Text,TimePicker,SafeAreaView,TouchableOpacity, Image, B
     import services from '../services/strata-api';
     //import DateTimePicker from '@react-native-community/datetimepicker';
     import DateTimePicker from "react-native-modal-datetime-picker";
+    
 
 
 export default function CreateTicket({route, navigation}) {
@@ -26,6 +27,8 @@ export default function CreateTicket({route, navigation}) {
   const [desc, setDesc] = useState('');
   const [miles, setDerivedMiles] = useState(0);
 
+  
+
   const setMiles= () => {
     if(startMileage == 0 || endMileage == 0)
     {
@@ -39,7 +42,7 @@ export default function CreateTicket({route, navigation}) {
   
 };
 
-const {agentId} = route.params;
+const {agentId,name} = route.params;
 
 
 
@@ -128,7 +131,7 @@ const handleSubmit=async () => {
       <View style={{ flex: 0.3  }}></View>
       
       <View style={{flex: 12 }}>
-      { !confirmMsg &&
+    
       <ScrollView style={[{flex: 12},styles.scrollView]}>
 
         <View style={styles.elementContainer}>
@@ -164,9 +167,11 @@ const handleSubmit=async () => {
             <View style={styles.elementContainer}>
         <Text style={styles.baseText}>End Mileage</Text>
         <TextInput
-            style={styles.input}
+            style={[styles.input, {color:"gray"}]}
             value={endMileage}
             onChangeText={(text) => setEndMileage(text)}
+            editable={false}
+            selectTextOnFocus={false}
         /> 
         </View>
 
@@ -193,8 +198,10 @@ const handleSubmit=async () => {
       <View style={styles.row}>
         <Text style={styles.baseText}>End Time</Text>
         <TextInput
-            style={styles.input}
+            style={[styles.input, {color: 'gray'}]}
             value={endTime.toString()}
+            editable={false}
+            selectTextOnFocus={false}
         />
         <TouchableOpacity onPress={() => showEndDatePicker()}>
             <Image
@@ -213,7 +220,7 @@ const handleSubmit=async () => {
           setConfirmation(!showDatePicker);
         }}>
         <View style={styles.centeredView}>
-        <DateTimePicker mode="datetime" 
+        <DateTimePicker mode="time" 
                     isVisible={showDatePicker}
                     onConfirm={date => {
                         setShowDatePicker(false);
@@ -251,7 +258,7 @@ const handleSubmit=async () => {
         }}>
         <View style={styles.centeredView}>
 
-        <DateTimePicker mode="datetime" 
+        <DateTimePicker mode="time" 
                     isVisible={showEndTimePicker}
                     onConfirm={date => {
                         setShowEndTimePicker(false);
@@ -286,12 +293,20 @@ const handleSubmit=async () => {
         onChangeText={(text) => setDesc(text)}
       />     
         </ScrollView>
-}
+
+
+        {/* <BlurView
+          style={styles.absolute}
+          blurType="light"
+          blurAmount={10}
+          reducedTransparencyFallbackColor="white"
+        /> */}
 
 <Modal
         animationType="slide"
         transparent={true}
         visible={confirmMsg}
+        presentationStyle="pageSheet"
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           setConfirmation(!confirmMsg);
@@ -325,7 +340,7 @@ const handleSubmit=async () => {
                 onPress={async () => {
                     await handleSubmit();
                     setConfirmation(!confirmMsg);
-                    navigation.navigate('Dashboard',{name:'Jake!'});
+                    navigation.navigate('Dashboard',{name:name, userId:agentId });
                     }}>
                 <Text style={styles.textStyle}>Proceed</Text>
                 </Pressable>
@@ -468,7 +483,7 @@ const styles = StyleSheet.create({
             margin: 20,
             backgroundColor: 'white',
             borderRadius: 20,
-            padding: 35,
+            padding: 20,
             //alignItems: 'center',
             shadowColor: '#000',
             shadowOffset: {
@@ -478,7 +493,7 @@ const styles = StyleSheet.create({
             shadowOpacity: 0.25,
             shadowRadius: 4,
             elevation: 5,
-            width: "80%",
+            width: "60%",
             height: "80%"
           },
           mobdalbutton: {
@@ -508,6 +523,13 @@ const styles = StyleSheet.create({
             marginBottom: 15,
             textAlign: 'center',
           },
+          absolute: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0
+          }
 
           //End of Modal Styles
 });

@@ -11,6 +11,7 @@ import HomeScreen from './components/homeScreen';
 import CreateTicket from './components/createTkt';
 import TicketDtl from './components/ticketDtl';
 
+
 // or any pure javascript modules available in npm
 import { Card } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -19,7 +20,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-     <NavigationContainer>
+    <NavigationContainer>
       <Stack.Navigator initialRouteName="Strata">
           <Stack.Screen 
             name="Strata"

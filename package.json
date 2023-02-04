@@ -15,6 +15,7 @@
     "@rneui/themed": "^4.0.0-rc.7",
     "expo-constants": "~13.2.4",
     "@expo/vector-icons": "^13.0.0",
+    "react-native-modal": "^13.0.1",
     "react-native-paper": "4.9.2",
     "react-native-screens": "~3.15.0",
     "react-native-swipeout": "^2.3.6",

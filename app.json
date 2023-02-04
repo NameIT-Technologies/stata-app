@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "stata-app",
-    "slug": "snack-1e86b8d1-f307-4f59-a3e4-7483886a575e",
+    "name": "strata-app",
+    "slug": "snack-e1b3dffd-85c2-42e4-8de9-1e6fb2d12af6",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,16 +24,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.strata.agentracker"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "66a6144d-c0d0-4875-a342-49a6bb69896d"
-      }
     }
   }
 }
