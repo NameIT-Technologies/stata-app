@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer,useNavigation, StackActions} from '@react-navigation/native';
+import { IconButton, MD3Colors } from 'react-native-paper';
+
+
 
 // You can import from local files
 import AssetExample from './components/AssetExample';
@@ -17,14 +20,20 @@ import { Card } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
+const navigationRef = React.createRef()
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Strata">
+      <Stack.Navigator initialRouteName="Strata"
+      screenOptions={({ navigation }) => ({ headerRight: () => (
+        <IconButton icon="logout" onPress={() => {
+          navigation.dispatch(StackActions.popToTop())}} />
+        )})}>
           <Stack.Screen 
             name="Strata"
             component={Login}
+            options={{headerShown: false}}
             />
 
         <Stack.Screen 
