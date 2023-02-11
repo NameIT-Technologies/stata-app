@@ -1,6 +1,6 @@
 import React, { useState }  from 'react';
 import { View, TextInput,Text,TimePicker,SafeAreaView,TouchableOpacity, Image, Button,
-    StyleSheet, ScrollView, StatusBar, Animated, Modal, Pressable, Platform } from "react-native";
+    StyleSheet, ScrollView, StatusBar, Animated, Modal, Pressable, Platform,Alert,KeyboardAvoidingView,ImageBackground } from "react-native";
     import { Card } from '@rneui/themed';
     import { NavigationContainer } from '@react-navigation/native';
     import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -20,8 +20,10 @@ export default function CreateTicket({route, navigation}) {
   const [startMileage, setStartMileage] = useState(0);
   const [endMileage, setEndMileage] = useState(0);
   const [confirmMsg,setConfirmation]=useState(false); 
+  const [alertmsg,setAlertmsg]=useState(false); 
+  
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [startTime, setStartTime] = useState('');
+  const [startTime, setStartTime] = useState(new Date(Date.now()));
   const [endTime, setEndTime] = useState(new Date("9999-12-31"));
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [desc, setDesc] = useState('');
@@ -109,6 +111,36 @@ const showStartDatePicker = () =>
     setShowDatePicker(!showDatePicker);
 }
 
+React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+    
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          'Discard changes?',
+          'You have unsaved changes. Are you sure to discard them and leave the screen?',
+          [
+            { text: "Don't leave", style: 'cancel', onPress: () => {
+            // this.props.navigation.navigate("createTicket",{agentId: agentId, name: name});
+              
+            } },
+            {
+              text: 'Discard',
+              style: 'destructive',
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ]
+        );
+      }),
+    [navigation]
+  );
+
+
 const showEndDatePicker = () =>
 {
     setEndTime(new Date());
@@ -124,7 +156,7 @@ const handleSubmit=async () => {
 
   return (
     <>
-      <View style={[styles.header,{ flex: 1 }]}>
+      <View style={[styles.header,{ flex: 1, alignSelf:'left',height:36,position:'absolute',left:40 }]}>
         <Text style={{color:"white"}}>New Ticket - {new Date().getDate()}{currentDay}</Text>
       </View>
 
@@ -132,10 +164,10 @@ const handleSubmit=async () => {
       
       <View style={{flex: 12 }}>
     
-      <ScrollView style={[{flex: 12},styles.scrollView]}>
+      <ScrollView style={[{flex: 12},styles.scrollView,[{paddingTop:30}]]}>
 
         <View style={styles.elementContainer}>
-        <Text style={styles.baseText}>Customer</Text>
+        <Text style={styles.baseTextcust}>Customer</Text>
         <TextInput
             style={styles.input}
             value={customerName}
@@ -143,7 +175,7 @@ const handleSubmit=async () => {
         />
         </View>
 
-        <View><Text> {'\n'}</Text></View>
+        <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
 
         <View style={styles.elementContainer}>
         <Text style={styles.baseText}>Job Site</Text>
@@ -163,26 +195,14 @@ const handleSubmit=async () => {
             onChangeText={(text) => setStartMileage(text)}
             />
             </View>
-            <View><Text> {'\n'}</Text></View>
-            <View style={styles.elementContainer}>
-        <Text style={styles.baseText}>End Mileage</Text>
-        <TextInput
-            style={[styles.input, {color:"gray"}]}
-            value={endMileage}
-            onChangeText={(text) => setEndMileage(text)}
-            editable={false}
-            selectTextOnFocus={false}
-        /> 
-        </View>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
 
-        <View><Text> {'\n'}</Text></View>
-    
     <View style={styles.elementContainer}>
     <View style={styles.row}>
         <Text style={styles.baseText}>Start Time</Text>
         <TextInput
             style={styles.input}
-            value={startTime.toString()}
+            value={startTime.toLocaleTimeString()}
         />
         <TouchableOpacity onPress={() => showStartDatePicker()}>
             <Image
@@ -194,22 +214,16 @@ const handleSubmit=async () => {
       </View> 
 
       <View><Text> {'\n'}</Text></View>
-      
-      <View style={styles.row}>
-        <Text style={styles.baseText}>End Time</Text>
-        <TextInput
-            style={[styles.input, {color: 'gray'}]}
-            value={endTime.toString()}
-            editable={false}
-            selectTextOnFocus={false}
-        />
-        <TouchableOpacity onPress={() => showEndDatePicker()}>
-            <Image
-            source={require('../assets/calendar-green.png')}
-            style={{marginTop: 15, height: 30, width: 30}}
-            /> 
-        </TouchableOpacity>
-      </View>
+
+      <Text style={styles.baseText}>Work Description</Text>
+      <TextInput
+        style={[styles.inputdesc, {height: 80}]}
+        value={desc}
+        onChangeText={(text) => setDesc(text)}
+      />     
+      <View><Text> {'\n'}</Text></View>
+
+
 
       <Modal
         animationType="slide"
@@ -286,12 +300,7 @@ const handleSubmit=async () => {
             </View>*/}
         </View>
     </Modal>
-      <Text style={styles.baseText}>Work Description</Text>
-      <TextInput
-        style={[styles.input, {height: 80}]}
-        value={desc}
-        onChangeText={(text) => setDesc(text)}
-      />     
+
         </ScrollView>
 
 
@@ -323,18 +332,29 @@ const handleSubmit=async () => {
             <View><Text> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Start Mileage: {startMileage}</Text>
             <View><Text> {'\n'}</Text></View>
-            <Text style={{color:"black"}}>End Mileage: {endMileage}</Text>
-            <View><Text> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Work Description: {desc}</Text>
-            <View><Text> {'\n'}</Text></View>
-             <Text style={{color:"black"}}>Total Miles: {miles}</Text> 
             <View><Text> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Start Time: {startTime.toString()}</Text>
              <View><Text> {'\n'}</Text></View>
+           
+            <Text style={{color:"black"}}>End Mileage: {endMileage}</Text>
+            <View><Text> {'\n'}</Text></View>
+           
+             <Text style={{color:"black"}}>Total Miles: {miles}</Text> 
+            <View><Text> {'\n'}</Text></View>
             <Text style={{color:"black"}}>End Time: {endTime.toString()}</Text>
         {/* </Card> */}
         <View><Text> {'\n'}</Text></View>
         <View style={[styles.buttonHolder]}>
+                
+
+                <Pressable
+                style={[styles.mobdalbutton, styles.buttonClose, {backgroundColor:"red" }]}
+                onPress={() => { setConfirmation(!confirmMsg);
+                //navigation.navigate('createTicket');
+            }}>
+                <Text style={styles.textStyle}>Cancel</Text>
+                </Pressable>
                 <Pressable
                 style={[styles.mobdalbutton, styles.buttonClose]}
                 onPress={async () => {
@@ -343,14 +363,6 @@ const handleSubmit=async () => {
                     navigation.navigate('Dashboard',{name:name, userId:agentId });
                     }}>
                 <Text style={styles.textStyle}>Proceed</Text>
-                </Pressable>
-
-                <Pressable
-                style={[styles.mobdalbutton, styles.buttonClose, {backgroundColor:"red" }]}
-                onPress={() => { setConfirmation(!confirmMsg);
-                //navigation.navigate('createTicket');
-            }}>
-                <Text style={styles.textStyle}>Cancel</Text>
                 </Pressable>
             </View>    
           </View>
@@ -363,14 +375,7 @@ const handleSubmit=async () => {
     <View style={[styles.buttonHolder]}>
 
 
-    <TouchableOpacity onPress={() => {
-            //setConfirmation(!confirmMsg)
-            navigation.navigate('Dashboard',{name:'Jake!'});
-          }} 
-          style={[styles.button, {backgroundColor:'red'}]}>
-            <Text style={[styles.buttonText]}>Cancel</Text>
-          </TouchableOpacity>
-
+   
       <TouchableOpacity onPress={() => {
         //setConfirmation(!confirmMsg);
         setMiles();
@@ -413,7 +418,34 @@ const styles = StyleSheet.create({
         padding: 12,
         justifyContent: 'space-around',
         backgroundColor: "white",
-        borderRadius: 100
+        borderRadius: 10,
+        borderWidth:0,
+     //   shadowColor: 'black',
+        
+     // shadowOffset: {width: 5, height: 5},
+     // shadowOpacity: 0.5,
+     // shadowRadius: -5,
+     // elevation:3
+        //flex: 1,
+      },
+    inputdesc: {
+        flexDirection: 'row',
+        flex:3,
+        height: 40,
+        margin:12,
+        borderWidth: 1,
+        padding: 12,
+        paddingTop:6,
+        justifyContent: 'space-around',
+        backgroundColor: "white",
+        borderRadius: 20,
+        borderWidth:0,
+     //   shadowColor: 'black',
+        
+     // shadowOffset: {width: 5, height: 5},
+     // shadowOpacity: 0.5,
+     // shadowRadius: -5,
+     // elevation:3
         //flex: 1,
       },
     
@@ -421,16 +453,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex:1,
         fontFamily: "Cochin",
-        margin: 10,
+        margin: 1,
         color: "white",
         padding: 8,
-        fontSize:12
+        fontSize:16
+      },
+       baseTextcust: {
+        flexDirection: 'row',
+        flex:1,
+        fontFamily: "Cochin",
+        margin: 1,
+        color: "white",
+        padding: 8,
+        fontSize:16,height:'100%'
       },
       scrollView: {
         flex:1,
         flexDirection:'column',
         marginHorizontal: 20,
-        backgroundColor: "#7F7D9C",
+        backgroundColor: "#485066",
         borderRadius: 25,
       },
       elementContainer: {
@@ -449,6 +490,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop : 10,
         marginRight: 10,
+
+        height: 36,
         padding:6,
         backgroundColor: "#74B72E",
         borderRadius: 25,
@@ -459,7 +502,7 @@ const styles = StyleSheet.create({
             flex: 1,
             fontFamily: 'Cochin',
             fontSize: 20,
-            backgroundColor: "#7F7D9C",
+            padding:12,
             color:"white"
           },
           buttonHolder:

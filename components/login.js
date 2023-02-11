@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput,StyleSheet, TouchableOpacity, Button, Animated,
-  ActivityIndicator,ImageBackground} from 'react-native';
+  ActivityIndicator,ImageBackground,Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import services from '../services/strata-api';
@@ -81,11 +81,18 @@ const Login = ({ navigation }) => {
   return (
 
     <View style={styles.container}>
-      <ImageBackground source={require("../stratalogin.png")} resizeMode="stretch" style={styles.image}>
-        <Text style={{ color: "black", padding: 6, fontFamily: 'TrebuchetMS-Bold', fontSize: 20 }}>Login</Text>
+      <ImageBackground source={require("../stratalogin1.png")} resizeMode="stretch" style={styles.image}>
+      
+       <Image
+        style={styles.tinyLogo}
+        source={require("../stratalogo.png")}
+      />
+
+      
+        <Text style={{ color: "black", padding: 6, fontFamily: 'TrebuchetMS-Bold', fontSize: 20, marginLeft:-180 }}>Login</Text>
         <View><Text> {'\n'}</Text></View>
         <View style={styles.elementContainer}>
-          <Text style={{ color: "white", padding: 6 }}>User ID:</Text>
+          <Text style={{ color: "white", padding: 6,marginLeft:12 }}>User ID:</Text>
           <TextInput style={styles.textInput}
             value={username}
             onChangeText={text => setUsername(text)} />
@@ -122,11 +129,15 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    marginTop : 100,
-    marginLeft : 20,
-    marginRight : 20
+    marginTop : -160,
+    backgroundColor:'white'
+    //marginLeft : 20,
+    //marginRight : 20
     },
-    
+    tinyLogo: {
+    width: 100,
+    height: 100,
+  },
     textInput: {
         flex:2,
       backgroundColor: "#FFFFFF",
@@ -134,6 +145,7 @@ const styles = StyleSheet.create({
       fontFamily: 'Cochin',
       sdmargin:12,
       flexWrap: 'wrap',
+      
       height: 30,
       borderRadius: 100
       },
@@ -149,22 +161,24 @@ const styles = StyleSheet.create({
         fontFamily: 'Cochin',
         fontSize: 14,
         flexWrap: 'wrap',
-        padding: 6,
-        justifyContent: 'space-around'
+        padding: 5,
+        justifyContent: 'space-around',
+        width:'85%'
         
       },
 
       button: {
         backgroundColor: "#74B72E",
-        padding: 20,
-        borderRadius: 10,
-        width:90,
+        padding: 10,
+        borderRadius: 20,
+        width:120,
+        height:60,
         marginLeft: '40%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     buttonText: {
-        color: "white",
+        color: "#ffffff",
         justifyContent: "center"
     
     },

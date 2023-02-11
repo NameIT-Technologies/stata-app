@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "strata-app",
-    "slug": "snack-e1b3dffd-85c2-42e4-8de9-1e6fb2d12af6",
+    "name": "strata-without-ui",
+    "slug": "snack-891fb5e1-8bf1-451e-833e-1b8eb0ab0980",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

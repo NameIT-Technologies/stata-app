@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 //import { useFocusEffect } from '@react-navigation/native';
-import { View, ScrollView, Text, StyleSheet,TouchableOpacity, ActivityIndicator, Modal, Pressable } from 'react-native';
+import { View, ScrollView, Text, StyleSheet,TouchableOpacity, ActivityIndicator, Modal, Pressable,ImageBackground } from 'react-native';
 //import Swipeout from 'react-native-swipeout';
 import { Avatar,Badge,Card } from '@rneui/themed';
 import * as ticketDtl from '../assets/data/ticket-details.json'
@@ -97,6 +97,25 @@ const getDay = (dt) => {
   }
 
 }
+
+
+
+const getDayh = (dt) => {
+  console.log(dt);
+  if(dt!=null)
+  {
+  newDt= weekday[new Date(dt).getDay()]+" "+new Date().getDate()+" "+new Date().getFullYear();
+  console.log("New Date => "+newDt);
+  return newDt;
+  }else
+  {
+    return "Day not found";
+  }
+
+}
+
+
+
 
 const tickets=async () => {
   const tktDtl=await services.getTickets();
@@ -211,35 +230,39 @@ console.log("Deleting "+ticketId);
 
 
     const confirmDelete= async() => {
-      setLoading(true);
       console.log("Confirm Delete for ticket "+ tktid);
       const data=await services.deleteTicket(tktid,requestOptions);
       console.log("Data => " + JSON.stringify(data));
-      setTkt(data);
-      setLoading(false);
+
     }
 
 
 
 return (
   <>
-
+  <View style={[styles.container]}>
+<ImageBackground source={require("../stratalogin1.png")} resizeMode="stretch" style={styles.image}>
   {loading && <View style={[styles.container, styles.horizontal]}>
       <ActivityIndicator size="large" color="#00ff00" />
     </View>}
 
-     {!loading && <View style={styles.header}>
+
+     {!loading &&  <View style={styles.DefaultView}>
+     <ScrollView>
+
+    <View style={styles.header}>
+      
+<Text style={[{position:'absolute',top:-10,left:63,fontSize:12,color:'red'}]}>{getDayh(new Date())} </Text>
+     
+
       <Text style={styles.subHeader}>Hi {name}</Text>
       <Avatar
         size={64}
         rounded
-        source= {{ uri:  'https://cdn.pixabay.com/photo/2016/11/21/12/42/beard-1845166_1280.jpg' }}
+        source= {{ uri:  'https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.png' }}
               
       />
-      </View>}
-
-     {!loading &&  <View style={styles.DefaultView}><ScrollView>
-    
+      </View>
 
        
       <View >
@@ -252,47 +275,55 @@ return (
     return (
     
       
-    <TouchableOpacity onPress={() =>{getTicket(data.ticketID,data.ticketStatus)} }
-              onLongPress={
+    <TouchableOpacity style={[{height:130}]} onPress={() =>{getTicket(data.ticketID,data.ticketStatus)} }
+          /*    onLongPress={
                 () => 
               {
                 console.log("Long Press called");
                 removeTicket(data.ticketID);
-              }}
+              }}*/
               
-              delayLongPress={100}>  
+              delayLongPress={300}>  
     <Card containerStyle={styles.row} borderRadius={35}>
 
       <Badge
         status = {data.ticketStatus}
         containerStyle={styles.statusInd}
+        badgeStyle={[{width:25,height:25,borderRadius:100}]}
       />
       <View style={[
     styles.container,
     {
+      width:320,
       // Try setting `flexDirection` to `"row"`.
       flexDirection: 'row',flexWrap: 'wrap',
-      justifyContent: 'space-around',
+      justifyContent: 'space-around'
     },
   ]}>
-        <Text h1 style={styles.cardContent}>Ticket {data.ticketID}</Text>
-        <Text h1 style={{color: "#FFFFFF"}}>{`${getDay(data.createDt)}`}</Text>
+        <Text h1 style={[styles.cardContentti],{top:-10,left:20,color:"white",position:"absolute"}}> {data.ticketID}</Text>
+        <Text h1 style={{color: "#FFFFFF",top:-10,left:265,color:"white",position:"absolute"}}>{`${getDay(data.createDt)}`}</Text>
       </View>
       
-      <View><Text> {'\n'}</Text></View>
+      <View><Text style={[{height:5}]}> {'\n'}</Text></View>
     
       <View style={[
     styles.container,
     {
       // Try setting `flexDirection` to `"row"`.
       flexDirection: 'row',flexWrap: 'wrap',
-      justifyContent: 'space-around',
+      justifyContent: 'space-around'
+      
     },
   ]}>
-    <Text style={{color: "#FFFFFF"}}>
-      {data.desc}
+    <Text style={{color: "#FFFFFF",top:3,left:23,color:"white",position:"absolute"}}>
+      {data.customerName}
     </Text>        
-    <Text h4 style={[styles.TextViewStyle,  {color: "#FFFFFF"}]}>{data.totalMiles} miles</Text>
+
+    
+    <Text style={{color: "#FFFFFF",top:23,left:25,color:"white",position:"absolute"}}>
+      {data.jboSite}
+    </Text>        
+    <Text h4 style={[styles.TextViewStyle,  {color: "#FFFFFF",top:15,left:260,color:"white",position:"absolute"}]}>{data.totalMiles} miles</Text>
     </View>
 
   </Card>
@@ -333,14 +364,14 @@ return (
             
             <Text style={{color:"black"}}><B>Start Mileage:</B> {startMileage}</Text>
             {/* <View><Text> {'\n'}</Text></View> */}
-            <Text style={{color:"black"}}><B>End Mileage:</B> {endMileage}</Text>
+            <Text style={{color:"black"}}><B>Start Time:</B> {new Date( startTime.toString()).toLocaleTimeString()}</Text>
             
             <Text style={{color:"black"}}><B>Work Description:</B> {desc}</Text>
             
       
-            <Text style={{color:"black"}}><B>Start Time:</B> {startTime.toString()}</Text>
+            <Text style={{color:"black"}}><B>End Mileage:</B> {endMileage}</Text>
             
-            <Text style={{color:"black"}}><B>End Time:</B> {endTime.toString()}</Text>
+            <Text style={{color:"black"}}><B>End Time:</B> {new Date(endTime.toString()).toLocaleTimeString()}</Text>
         {/* </Card> */}
         <View><Text> {'\n'}</Text></View>
         <View style={[styles.buttonHolder]}>
@@ -380,12 +411,14 @@ return (
             
             <Text style={{color:"black"}}><B>Start Mileage:</B> {startMileage}</Text>
             {/* <View><Text> {'\n'}</Text></View> */}
-            <Text style={{color:"black"}}><B>End Mileage:</B> {endMileage}</Text>
-            
+
+            <Text style={{color:"black"}}><B>Start Time:</B> {startTime.toString()}</Text>
+ 
             <Text style={{color:"black"}}><B>Work Description:</B> {desc}</Text>
             
       
-            <Text style={{color:"black"}}><B>Start Time:</B> {startTime.toString()}</Text>
+           
+            <Text style={{color:"black"}}><B>End Mileage:</B> {endMileage}</Text>
             
             <Text style={{color:"black"}}><B>End Time:</B> {endTime.toString()}</Text>
         {/* </Card> */}
@@ -406,7 +439,8 @@ return (
           </View>
         </View>
       </Modal>
-
+</ImageBackground>
+  </View>
   </>
 );
 }
@@ -415,7 +449,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 4,
     flexDirection: 'row',
-},
+ },
 DefaultView: {
     flex: 4,
     //backgroundColor: '#000',
@@ -440,7 +474,7 @@ marginTop : 40
 },
 
 row: {
-  backgroundColor: "#7F7D9C",
+  backgroundColor: "#485066",
   color: "#FFFFFF",
   flex: 1,
   flexDirection: 'column',
@@ -461,6 +495,14 @@ row: {
     fontFamily: 'Cochin',
     fontSize: 20
   },
+  cardContentti:{
+    color: "#FFFFFF",
+    fontFamily: 'Cochin',
+    fontSize: 20,
+    position:"absolute",
+    width:112,
+    top:30
+  },
 
   roundButton1: {
     width: 50,
@@ -475,13 +517,14 @@ row: {
     //marginBottom: -10
   },
   statusInd: {
-    width: 15,
-    height: 15,
+    width: 25,
+    height: 25,
     flexDirection: 'column',
     justifyContent: 'center',
     alignSelf:'flex-end',
-    padding: 5,
+    padding: 0,
     borderRadius: 100,
+    border:0,
     backgroundColor: '#74B72E',
     top:-15,
     left:10
@@ -556,11 +599,23 @@ row: {
             width: "90%",
             height: "50%"
           },
+ 
+ 
+ 
+ 
           horizontal: {
             flexDirection: 'row',
             justifyContent: 'space-around',
             padding: 10,
-          }
+          },
+    image: {
+      backgroundColor:'#FFFFff',
+      width:'100%',
+      height:'100%',
+       justifyContent: 'center',
+       alignItems: 'center',
+       }
+
 //End of Modal styling
   // h1Style: {
   //   color: "#FFFFFF",

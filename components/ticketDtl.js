@@ -1,6 +1,6 @@
 import React, { useState, useEffect }  from 'react';
 import { View, TextInput,Text, TimePicker,SafeAreaView,TouchableOpacity, Image, Button,
-    StyleSheet, ScrollView, StatusBar, Animated, Modal, Pressable } from "react-native";
+    StyleSheet, ScrollView, StatusBar, Animated, Modal, Pressable,KeyboardAvoidingView,ImageBackground } from "react-native";
     import { Card } from '@rneui/themed';
     import { NavigationContainer } from '@react-navigation/native';
     import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -19,7 +19,7 @@ export default function TicketDtl({route, navigation}) {
   const [endMileage, setEndMileage] = useState('');
   const [confirmMsg,setConfirmation]=useState(false); 
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [startTime, setStartTime] = useState('');
+  const [startTime, setStartTime] = useState(new Date(Date.now()));
   const [endTime, setEndTime] = useState(new Date("9999-12-31"));
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [desc, setDesc] = useState('');
@@ -28,6 +28,7 @@ export default function TicketDtl({route, navigation}) {
   const[mgrId,setMgrId]= useState('');
   const[totalHrs,setTotalHrs]= useState(0);
   const[agentId,setAgentId]= useState(0);
+  const[loading, setLoading] = useState(true);
 
   const {ticketID,name,userId} = route.params;
   const[Tkts, setTkt] = useState(false);
@@ -44,6 +45,7 @@ useEffect(() => {
         await initializeValues(data[0]);
         console.log("Start Miles : "+data[0].startMileage+"; Miles => "+startMileage+"; AgentId :"+agentId
         +"; End Mileage: "+endMileage);
+        
 
      })
     },[]);
@@ -52,6 +54,7 @@ useEffect(() => {
     useEffect(() => {
       console.log("UseEffect => "+startMileage); // returns 0;
       setTkt(true);
+      setLoading(false);
 
     }, [startMileage]);
 
@@ -67,8 +70,8 @@ useEffect(() => {
       //await setEndMileage(data[0].endMileage);
       const endMi=2000;
        setEndMileage(endMi);
-       setStartTime(item.startTime);
-       setEndTime(item.endTime);
+       setStartTime(new Date(item.startTime));
+       setEndTime(new Date(item.endTime));
        setDesc(item.desc);
        setDerivedMiles(item.totalMiles);
        setCreateDt(item.createDt);
@@ -171,7 +174,19 @@ const showStartDatePicker = () =>
     setStartTime(new Date());
     setShowDatePicker(!showDatePicker);
 }
+const getDay = (dt) => {
+  console.log(dt);
+  if(dt!=null)
+  {
+  newDt= new Date(dt).getDate()+weekday[new Date(dt).getDay()];
+  console.log("New Date => "+newDt);
+  return newDt;
+  }else
+  {
+    return "Day not found";
+  }
 
+}
 const showEndDatePicker = () =>
 {
     setEndTime(new Date());
@@ -199,66 +214,68 @@ function isIsoDate(str) {
 
   return (
     <>
-      <View style={[styles.header,{ flex: 1 }]}>
-        <Text style={{color:"white"}}>New Ticket - {new Date().getDate()}{currentDay}</Text>
-      </View>
+  <View style={[styles.container]}>
+<ImageBackground source={require("../stratalogin1.png")} resizeMode="stretch" style={styles.image}>
+    
+      {!loading && Tkts && <View style={[styles.header,{ flex: 1 }]}>
+        <Text style={{color:"white"}}>Complete Ticket - {getDay( createDt)}</Text>
+      </View>}
+      
 
       <View style={{ flex: 0.3  }}></View>
       
-      <View style={{flex: 12 }}>
+      <KeyboardAvoidingView  behavior={ 'padding'} style={{flex: 12 }}>
       {/* { !confirmMsg && Tkts && */}
-      {Tkts &&
-      <ScrollView style={[{flex: 12},styles.scrollView]}>
+      {!loading && Tkts &&
+      <ScrollView style={[{flex: 12,paddingTop:30},styles.scrollView]}>
 
         <View style={styles.elementContainer}>
         <Text style={styles.baseText}>Customer</Text>
         <TextInput
-            style={styles.input}
+        editable={false}
+            style={[styles.input,{backgroundColor:"grey"}]}
             value={customerName}
             onChangeText={(text) => setCustomerName(text)}
         />
         </View>
 
-        <View><Text> {'\n'}</Text></View>
+        <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
 
         <View style={styles.elementContainer}>
         <Text style={styles.baseText}>Job Site</Text>
         <TextInput
-            style={styles.input}
+        editable={false}
+            style={[styles.input,{backgroundColor:"grey"}]}
             value={jobSite}
             onChangeText={(text) => setJobSite(text)}
         />
         </View>
-        <View><Text> {'\n'}</Text></View>
+        <View><Text style={[ {height: 25}]}> {'\n'}</Text></View>
 
         <View style={styles.elementContainer}>
         <Text style={styles.baseText}>Start Mileage</Text>
             <TextInput
-            style={styles.input}
+            style={[styles.input,{backgroundColor:"grey"}]}
+            editable={false}
+            keyboardType="numeric"
             value={startMileage}
             onChangeText={(text) => setStartMileage(text)}
             />
             </View>
-            <View><Text> {'\n'}</Text></View>
-            <View style={styles.elementContainer}>
-        <Text style={styles.baseText}>End Mileage</Text>
-        <TextInput
-            style={styles.input}
-            value={endMileage}
-            onChangeText={(text) => setEndMileage(text)}
-        /> 
-        </View>
+            <View><Text style={[{height:1}]}> {'\n'}</Text></View>
 
-        <View><Text> {'\n'}</Text></View>
-    
+
     <View style={styles.elementContainer}>
     <View style={styles.row}>
         <Text style={styles.baseText}>Start Time</Text>
         <TextInput
-            style={styles.input}
-            value={startTime.toString()}
+            editable={false}
+            selectTextOnFocus={false}
+            pointerEvents="none"
+            style={[styles.input,{backgroundColor:"grey"}]}
+            value={startTime.toLocaleTimeString()}
         />
-        <TouchableOpacity onPress={() => showStartDatePicker()}>
+        <TouchableOpacity /*onPress={() => showStartDatePicker()}*/>
             <Image
             source={require('../assets/calendar-green.png')}
             style={{marginTop: 15, height: 30, width: 30}}
@@ -268,12 +285,38 @@ function isIsoDate(str) {
       </View> 
 
       <View><Text> {'\n'}</Text></View>
-      
-      <View style={styles.row}>
-        <Text style={styles.baseText}>End Time</Text>
+    
+
+      <Text style={styles.baseTextdesc}>Work Description</Text>
+      <TextInput
+        style={[styles.input,{backgroundColor:"grey",height:80}]}
+        value={desc}
+        onChangeText={(text) => setDesc(text)}
+      />     
+           
+           
+           
+            <View style={styles.elementContainer}>
+        <Text style={styles.baseText}>End Mileage</Text>
         <TextInput
             style={styles.input}
-            value={endTime.toString()}
+            value={endMileage}
+            keyboardType="numeric"
+            onChangeText={(text) => setEndMileage(text)}
+        /> 
+        </View>
+
+        <View><Text style={[{height:1}]}> {'\n'}</Text></View>
+    
+      
+      <View style={styles.row} onPress={() => showEndDatePicker()}>
+      
+        <Text style={styles.baseText}>End Time</Text>
+        <TextInput ontouchend={() => showEndDatePicker() }
+            style={styles.input}
+            value={endTime.toLocaleTimeString()}
+            editable={false}
+            selectTextOnFocus={false}
         />
         <TouchableOpacity onPress={() => showEndDatePicker()}>
             <Image
@@ -282,6 +325,45 @@ function isIsoDate(str) {
             /> 
         </TouchableOpacity>
       </View>
+     <View><Text style={[ {height: 1}]}> {'\n'}</Text></View>
+   
+ <View style={styles.elementContainer}>
+        <Text style={styles.baseText}>Total Hours</Text>
+        <TextInput
+            style={styles.input}
+           // value={totalHrs}
+            editable={false}
+            
+        />
+        </View>
+      
+
+
+
+<View style={{ flex: 1 ,top:60 }}>
+    <View style={[styles.buttonHolder]}>
+
+
+    <TouchableOpacity onPress={() => {
+            //setConfirmation(!confirmMsg)
+            navigation.navigate('Dashboard',{name:name,userId:userId});
+          }} 
+          style={[styles.button, {backgroundColor:'red'}]}>
+            <Text style={[styles.buttonText]}>Cancel</Text>
+          </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => {
+        //setConfirmation(!confirmMsg);
+        setMiles();
+        
+      }} 
+      style={[styles.button]}>
+        <Text style={[styles.buttonText]}>Close</Text>
+    </TouchableOpacity>
+    </View> 
+    </View>
+    
+
 
       <Modal
         animationType="slide"
@@ -356,12 +438,6 @@ function isIsoDate(str) {
             {/* </View> */}
         </View>
     </Modal>
-      <Text style={styles.baseText}>Work Description</Text>
-      <TextInput
-        style={[styles.input, {height: 80}]}
-        value={desc}
-        onChangeText={(text) => setDesc(text)}
-      />     
         </ScrollView>
 }
 
@@ -380,22 +456,22 @@ function isIsoDate(str) {
             <Text style={{color:"black",alignItems: 'center',justifyContent: 'center', fontSize:18}}>Please verify before Submitting the data </Text>
             <View><Text> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Customer: {customerName}</Text>
-            <View><Text> {'\n'}</Text></View>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Job Site: {jobSite}</Text>
-            <View><Text> {'\n'}</Text></View>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Start Mileage: {startMileage}</Text>
-            <View><Text> {'\n'}</Text></View>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
             <Text style={{color:"black"}}>End Mileage: {endMileage}</Text>
-            <View><Text> {'\n'}</Text></View>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
             <Text style={{color:"black"}}>Work Description: {desc}</Text>
-            <View><Text> {'\n'}</Text></View>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
              <Text style={{color:"black"}}>Total Miles: {miles}</Text> 
-            <View><Text> {'\n'}</Text></View>
-            <Text style={{color:"black"}}>Start Time: {startTime.toString()}</Text>
-             <View><Text> {'\n'}</Text></View>
-            <Text style={{color:"black"}}>End Time: {endTime.toString()}</Text>
+            <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
+            <Text style={{color:"black"}}>Start Time: {startTime.toLocaleTimeString()}</Text>
+             <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
+            <Text style={{color:"black"}}>End Time: {endTime.toLocaleTimeString()}</Text>
         {/* </Card> */}
-        <View><Text> {'\n'}</Text></View>
+        <View><Text style={[ {height: 12}]}> {'\n'}</Text></View>
         <View style={[styles.buttonHolder]}>
                 <Pressable
                 style={[styles.mobdalbutton, styles.buttonClose]}
@@ -419,30 +495,12 @@ function isIsoDate(str) {
         </View>
       </Modal>
 
-    </View>
+    </KeyboardAvoidingView>
     <View style={{ flex: 0.2  }}></View>
-    <View style={{ flex: 1  }}>
-    <View style={[styles.buttonHolder]}>
+    </ImageBackground>
+  </View>
 
-
-    <TouchableOpacity onPress={() => {
-            //setConfirmation(!confirmMsg)
-            navigation.navigate('Dashboard',{name:name,userId:userId});
-          }} 
-          style={[styles.button, {backgroundColor:'red'}]}>
-            <Text style={[styles.buttonText]}>Cancel</Text>
-          </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => {
-        //setConfirmation(!confirmMsg);
-        setMiles();
-        
-      }} 
-      style={[styles.button]}>
-        <Text style={[styles.buttonText]}>Close</Text>
-    </TouchableOpacity>
-    </View>
-    </View>
+    
     </>
   );
 }
@@ -466,7 +524,16 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     
     },
-    input: {
+      baseTextdesc: {
+        flexDirection: 'row',
+        flex:1,
+        fontFamily: "Cochin",
+        margin: 1,
+        color: "white",
+        paddingTop: 8,
+        fontSize:16
+      },
+        input: {
         flexDirection: 'row',
         flex:3,
         height: 40,
@@ -475,7 +542,7 @@ const styles = StyleSheet.create({
         padding: 12,
         justifyContent: 'space-around',
         backgroundColor: "white",
-        borderRadius: 100
+        borderRadius: 10
         //flex: 1,
       },
     
@@ -492,7 +559,7 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection:'column',
         marginHorizontal: 20,
-        backgroundColor: "#7F7D9C",
+        backgroundColor: "#485066",
         borderRadius: 25,
       },
       elementContainer: {
@@ -520,8 +587,8 @@ const styles = StyleSheet.create({
             flexWrap: "wrap",
             flex: 1,
             fontFamily: 'Cochin',
+            padding:12,
             fontSize: 20,
-            backgroundColor: "#7F7D9C",
             color:"white"
           },
           buttonHolder:
@@ -555,8 +622,8 @@ const styles = StyleSheet.create({
             shadowOpacity: 0.25,
             shadowRadius: 4,
             elevation: 5,
-            width: "80%",
-            height: "80%"
+            width: "85%",
+            height: "50%"
           },
           mobdalbutton: {
             borderRadius: 20,
@@ -585,6 +652,13 @@ const styles = StyleSheet.create({
             marginBottom: 15,
             textAlign: 'center',
           },
+    image: {
+      backgroundColor:'#FFFFff',
+      width:'100%',
+      height:'100%',
+       justifyContent: 'center',
+       alignItems: 'center',
+       }
 
           //End of Modal Styles
 });
